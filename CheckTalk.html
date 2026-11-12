@@ -91,7 +91,7 @@
     box-sizing: border-box;
     font-family: var(--font-body);
     /* Schrift folgt der Größe der Browserquelle: ein Design für horizontal und vertikal */
-    font-size: clamp(16px, min(5.2vw, 7vh), 72px);
+    font-size: calc(clamp(16px, min(5.2vw, 7vh), 72px) * var(--scale, 1));
   }
   body[data-anchor="tl"] { align-items: flex-start; justify-content: flex-start; }
   body[data-anchor="tr"] { align-items: flex-start; justify-content: flex-end; }
@@ -236,6 +236,8 @@ const AUTO_HIDE_MS = 5000; // nur im Demo-Modus; im Betrieb blendet der Server a
 
 const THEMES = ['panel', 'spargel', 'neutral'];
 document.documentElement.dataset.theme = THEMES.includes(params.get('theme')) ? params.get('theme') : 'panel';
+const scale = parseFloat(params.get('scale'));
+if (scale >= 0.5 && scale <= 2) document.documentElement.style.setProperty('--scale', String(scale));
 const anchor = params.get('anchor');
 if (['tl', 'tr', 'bl', 'br', 'c'].includes(anchor)) document.body.dataset.anchor = anchor;
 if (params.has('title')) document.getElementById('heading').textContent = params.get('title');

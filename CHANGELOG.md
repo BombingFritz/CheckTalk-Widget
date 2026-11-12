@@ -5,6 +5,7 @@ Format: [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach
 ## [Unreleased]
 ### Added
 - Theme `panel` als Standard: Schiefertafel mit Eisenrahmen und Nieten, bernsteinfarbenes Leuchtschild als Überschrift, cremefarbene Serifenschrift, aktives Thema mit glimmendem Kästchen. Abgestimmt auf die Programm-Tafel der Intro-Szene.
+- URL-Parameter `scale` (0.5–2) zum Feinjustieren der Schriftgröße.
 ### Changed
 - Bisheriges Standard-Theme heißt jetzt `spargel`; `theme=brand` entfällt.
 

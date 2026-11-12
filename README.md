@@ -28,8 +28,8 @@ Empfohlene Quellen (abgestimmt auf die Intro-Szene, 12.11.2026):
 
 | Ausgabe | Quelle (Breite × Höhe) | Position | Parameter |
 |---|---|---|---|
-| horizontal, 2560 × 1440 | 640 × 520 | links, x 40, y 540 (unter der Landkarte) | `anchor=tl` |
-| vertikal, 1080 × 1920 | 1080 × 730 | unterer schwarzer Bereich, y 1190 | `anchor=c` |
+| horizontal, 2560 × 1440 | 940 × 720 | links, x 40, y 540 (unter der Landkarte) | `anchor=tl` |
+| vertikal, 1080 × 1920 | 1080 × 730 | unterer schwarzer Bereich, y 1190 | `anchor=c&scale=1.1` |
 
 Vertikal steht die Liste dort, wo sonst Dreh-Logo und Untertitel stehen; diese Quellen sollten während der Liste ausgeblendet sein (siehe `docs/OFFEN.md`).
 
@@ -40,6 +40,7 @@ Schriften (Theme `panel`): Rockwell für die Themen, Bahnschrift für die Übers
 | `server` | Adresse des Servers | `http://localhost:3000` |
 | `theme` | `panel` (Schiefertafel mit Messingrahmen, passend zur Programm-Tafel), `spargel` (wie SpargelPoll), `neutral` | `panel` |
 | `anchor` | `tl`, `tr`, `bl`, `br`, `c` (Ecke innerhalb der Quelle) | `tl` |
+| `scale` | Schriftgröße als Faktor, 0.5 bis 2 | `1` |
 | `title` | Überschrift; leer = keine | `Topics of the day` |
 | `demo` | `1` = ohne Server, Bedienung per Tastatur | aus |
 | `items` | nur Demo: Themen, getrennt mit `\|` | Beispielliste |
