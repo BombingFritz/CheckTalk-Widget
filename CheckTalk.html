@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CheckTalk</title>
+<style>
+  :root {
+    /* Branding wie SpargelPoll: Impact, Grün #4a7c23, weiße Schrift mit schwarzer Kontur */
+    --font: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    --plate: rgba(0, 0, 0, 0.55);
+    --accent: #4a7c23;
+    --accent-light: #7bc043;
+    --text: #ffffff;
+    --outline: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+    --open: 0.55;      /* offen: halbtransparent */
+    --active: 1;       /* aktiv: voll */
+    --done: 0.42;      /* erledigt: noch transparenter */
+    --done-text: #b4b4b4; /* erledigt: ausgegraut */
+    --fade-in: 600ms;
+    --fade-out-manual: 600ms;
+    --fade-out-auto: 1600ms;
+    --step: 450ms;
+  }
+  :root[data-theme="neutral"] {
+    --font: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+    --plate: rgba(0, 0, 0, 0.45);
+    --accent: rgba(255, 255, 255, 0.85);
+    --accent-light: #ffffff;
+    --outline: 0 1px 3px rgba(0, 0, 0, 0.8);
+  }
+  html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    overflow: hidden;
+  }
+  body {
+    display: flex;
+    padding: 2vmin;
+    box-sizing: border-box;
+    font-family: var(--font);
+    /* Schrift folgt der Größe der Browserquelle: ein Design für horizontal und vertikal */
+    font-size: clamp(16px, min(5.2vw, 7vh), 72px);
+  }
+  body[data-anchor="tl"] { align-items: flex-start; justify-content: flex-start; }
+  body[data-anchor="tr"] { align-items: flex-start; justify-content: flex-end; }
+  body[data-anchor="bl"] { align-items: flex-end;   justify-content: flex-start; }
+  body[data-anchor="br"] { align-items: flex-end;   justify-content: flex-end; }
+  body[data-anchor="c"]  { align-items: center;     justify-content: center; }
+
+  .plate {
+    background: var(--plate);
+    border-left: 0.18em solid var(--accent);
+    border-radius: 0.3em;
+    padding: 0.55em 0.9em 0.6em 0.75em;
+    max-width: 100%;
+    box-sizing: border-box;
+    opacity: 0;
+    transition: opacity var(--fade-in) ease;
+  }
+  .plate.visible { opacity: 1; }
+  .plate.hiding-auto { transition-duration: var(--fade-out-auto); }
+  .plate.hiding-manual { transition-duration: var(--fade-out-manual); }
+
+  .heading {
+    color: var(--accent-light);
+    text-shadow: var(--outline);
+    text-transform: uppercase;
+    font-size: 0.62em;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.35em;
+  }
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  li {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    padding: 0.12em 0;
+    color: var(--text);
+    text-shadow: var(--outline);
+    opacity: var(--open);
+    transition: opacity var(--step) ease;
+  }
+  li[data-status="aktiv"]    { opacity: var(--active); }
+  li[data-status="erledigt"] { opacity: var(--done); }
+
+  .box {
+    flex: none;
+    width: 0.7em;
+    height: 0.7em;
+    border: 0.09em solid var(--text);
+    border-radius: 0.12em;
+    box-shadow: 1px 1px 0 #000;
+    position: relative;
+    transition: background-color var(--step) ease, border-color var(--step) ease;
+  }
+  li[data-status="aktiv"] .box { border-color: var(--accent-light); }
+  li[data-status="erledigt"] .box { background: var(--accent); border-color: var(--accent); }
+  .box::after {
+    /* Haken */
+    content: '';
+    position: absolute;
+    left: 0.2em;
+    top: 0.02em;
+    width: 0.2em;
+    height: 0.4em;
+    border: solid #fff;
+    border-width: 0 0.08em 0.08em 0;
+    transform: rotate(45deg) scale(0);
+    transform-origin: center;
+    transition: transform var(--step) ease;
+  }
+  li[data-status="erledigt"] .box::after { transform: rotate(45deg) scale(1); }
+
+  .title {
+    position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+  .title { transition: color var(--step) ease; }
+  /* erledigt: nur abgehakt und ausgegraut, nicht durchgestrichen */
+  li[data-status="erledigt"] .title { color: var(--done-text); }
+
+  .demo-help {
+    position: fixed;
+    right: 8px;
+    bottom: 6px;
+    font: 12px/1.4 system-ui, sans-serif;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body data-anchor="tl">
+  <div class="plate" id="plate" aria-live="polite">
+    <div class="heading" id="heading">Topics of the day</div>
+    <ol id="list"></ol>
+  </div>
+
+<script>
+'use strict';
+const WIDGET_VERSION = '0.1.0';
+
+// ── Einstellungen per URL-Parameter ──
+const params = new URLSearchParams(location.search);
+const SERVER = (params.get('server') || 'http://localhost:3000').replace(/\/$/, '');
+const DEMO = params.get('demo') === '1';
+const AUTO_HIDE_MS = 5000; // nur im Demo-Modus; im Betrieb blendet der Server aus
+
+document.documentElement.dataset.theme = params.get('theme') === 'neutral' ? 'neutral' : 'brand';
+const anchor = params.get('anchor');
+if (['tl', 'tr', 'bl', 'br', 'c'].includes(anchor)) document.body.dataset.anchor = anchor;
+if (params.has('title')) document.getElementById('heading').textContent = params.get('title');
+if (params.get('title') === '') document.getElementById('heading').hidden = true;
+
+const plate = document.getElementById('plate');
+const list = document.getElementById('list');
+let lastRevision = -1;
+let renderedTitles = '';
+
+// ── Anzeige: setzt nur Klassen/Attribute, damit CSS-Übergänge greifen ──
+function render(state) {
+  if (typeof state.revision === 'number') {
+    if (state.revision <= lastRevision && state.revision !== 0) return;
+    lastRevision = state.revision;
+  }
+  const titles = JSON.stringify(state.items.map(i => i.title));
+  if (titles !== renderedTitles) {
+    list.replaceChildren(...state.items.map(item => {
+      const li = document.createElement('li');
+      const box = document.createElement('span');
+      box.className = 'box';
+      const title = document.createElement('span');
+      title.className = 'title';
+      title.textContent = item.title;
+      li.append(box, title);
+      return li;
+    }));
+    renderedTitles = titles;
+  }
+  state.items.forEach((item, i) => { list.children[i].dataset.status = item.status; });
+
+  const show = Boolean(state.enabled !== false && state.visible && state.items.length);
+  plate.classList.toggle('hiding-auto', !show && state.hide_reason === 'auto');
+  plate.classList.toggle('hiding-manual', !show && state.hide_reason !== 'auto');
+  plate.classList.toggle('visible', show);
+}
+
+function hideBecauseOffline() {
+  plate.classList.remove('visible', 'hiding-auto');
+  plate.classList.add('hiding-manual');
+}
+
+// ── Betrieb: Zustand vom Server per Server-Sent Events (Spec intro-topics.md) ──
+function connect() {
+  const source = new EventSource(`${SERVER}/api/topics/stream`);
+  source.addEventListener('state', ev => {
+    try { render(JSON.parse(ev.data)); } catch (err) { console.warn('[CheckTalk] Ungültiger Zustand', err); }
+  });
+  source.onerror = () => {
+    // EventSource verbindet selbst neu (retry vom Server); bis dahin nichts zeigen
+    hideBecauseOffline();
+    lastRevision = -1;
+  };
+}
+
+// ── Demo-Modus: gleiche Schrittlogik wie der Server, Bedienung per Tastatur ──
+function demo() {
+  const titles = (params.get('items') || 'Neuigkeiten|Streamplan|Community|Heute im Spiel').split('|').filter(Boolean);
+  let step = 0, visible = false, hideReason = null, revision = 0, timer = null;
+
+  const statusOf = i => step < 2 * i + 1 ? 'offen' : step === 2 * i + 1 ? 'aktiv' : 'erledigt';
+  const emit = () => render({
+    enabled: true, visible, hide_reason: hideReason, step, total: titles.length,
+    items: titles.map((title, i) => ({ title, status: statusOf(i) })), revision: ++revision
+  });
+  const stopTimer = () => { clearTimeout(timer); timer = null; };
+  const show = () => { visible = true; hideReason = null; };
+
+  const actions = {
+    next() {
+      stopTimer();
+      if (!visible) return show();
+      if (step < 2 * titles.length) step++;
+      if (step === 2 * titles.length) {
+        timer = setTimeout(() => { visible = false; hideReason = 'auto'; emit(); }, AUTO_HIDE_MS);
+      }
+    },
+    back() {
+      stopTimer();
+      if (!visible) return show();
+      if (step > 0) step--;
+    },
+    toggle() {
+      stopTimer();
+      if (visible) { visible = false; hideReason = 'manual'; } else show();
+    },
+    reset() { stopTimer(); step = 0; visible = false; hideReason = 'manual'; }
+  };
+  const keys = { n: 'next', ArrowRight: 'next', ' ': 'next', b: 'back', ArrowLeft: 'back', h: 'toggle', r: 'reset' };
+  document.addEventListener('keydown', ev => {
+    const action = keys[ev.key];
+    if (!action) return;
+    ev.preventDefault();
+    actions[action]();
+    emit();
+  });
+
+  const help = document.createElement('div');
+  help.className = 'demo-help';
+  help.textContent = `Demo ${WIDGET_VERSION} · N/→/Leertaste weiter · B/← zurück · H ein/aus · R reset`;
+  document.body.append(help);
+  emit();
+}
+
+if (DEMO) demo(); else connect();
+</script>
+</body>
+</html>
