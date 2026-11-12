@@ -24,10 +24,21 @@ file:///C:/Pfad/zu/CheckTalk.html
 
 Größe und Lage legt die Quelle fest; die Schrift passt sich an. Für die vertikale Ausgabe eine zweite Quelle mit derselben Datei anlegen; beide zeigen denselben Stand.
 
+Empfohlene Quellen (abgestimmt auf die Intro-Szene, 12.11.2026):
+
+| Ausgabe | Quelle (Breite × Höhe) | Position | Parameter |
+|---|---|---|---|
+| horizontal, 2560 × 1440 | 640 × 520 | links, x 40, y 540 (unter der Landkarte) | `anchor=tl` |
+| vertikal, 1080 × 1920 | 1080 × 730 | unterer schwarzer Bereich, y 1190 | `anchor=c` |
+
+Vertikal steht die Liste dort, wo sonst Dreh-Logo und Untertitel stehen; diese Quellen sollten während der Liste ausgeblendet sein (siehe `docs/OFFEN.md`).
+
+Schriften (Theme `panel`): Rockwell für die Themen, Bahnschrift für die Überschrift. Bahnschrift gehört zu Windows 10/11, Rockwell kommt meist mit Microsoft Office. Fehlt eine Schrift, greift die nächste aus der Liste (Roboto Slab, Courier New bzw. Arial Narrow).
+
 | Parameter | Werte | Standard |
 |---|---|---|
 | `server` | Adresse des Servers | `http://localhost:3000` |
-| `theme` | `brand`, `neutral` | `brand` |
+| `theme` | `panel` (Schiefertafel mit Messingrahmen, passend zur Programm-Tafel), `spargel` (wie SpargelPoll), `neutral` | `panel` |
 | `anchor` | `tl`, `tr`, `bl`, `br`, `c` (Ecke innerhalb der Quelle) | `tl` |
 | `title` | Überschrift; leer = keine | `Topics of the day` |
 | `demo` | `1` = ohne Server, Bedienung per Tastatur | aus |

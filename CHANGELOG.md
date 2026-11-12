@@ -3,6 +3,10 @@
 Format: [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
+### Added
+- Theme `panel` als Standard: Schiefertafel mit Eisenrahmen und Nieten, bernsteinfarbenes Leuchtschild als Überschrift, cremefarbene Serifenschrift, aktives Thema mit glimmendem Kästchen. Abgestimmt auf die Programm-Tafel der Intro-Szene.
+### Changed
+- Bisheriges Standard-Theme heißt jetzt `spargel`; `theme=brand` entfällt.
 
 ## [0.1.0] – Entwurf
 ### Added
