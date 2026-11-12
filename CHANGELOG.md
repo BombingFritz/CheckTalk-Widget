@@ -3,6 +3,19 @@
 Format: [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach [Semantic Versioning](https://semver.org/lang/de/).
 
 ## [Unreleased]
+
+## [0.2.0] – 2026-11-12
+### Added
+- Anzeige-Einstellungen vom Server: Überschrift, Design und Hintergrund je Ausgabe kommen aus der Webkonsole (Reiter „Topics“) und gelten sofort. Neuer Parameter `output=horizontal|vertikal`; `theme`, `background` und `title` überschreiben nur noch für eine Quelle.
+- Hintergrund „deckend“: Beim Einblenden füllt das Widget die ganze Browserquelle und überdeckt darunterliegende Quellen (z. B. Untertitel im Hochformat).
+- Freie Schriften eingebettet: Zilla Slab (Themen) und Big Shoulders Stencil (Überschrift), SIL Open Font License 1.1, siehe `LICENSE-FONTS.txt`.
+### Changed
+- Standard-Überschrift „Tagesthemen“.
+- Ein- und Ausblenden betrifft die ganze Quelle statt nur der Tafel.
+### Fixed
+- Demo-Modus: Ein weiterer Klick auf „weiter“ bei fertiger Liste hielt das automatische Ausblenden an.
+
+## [0.1.1] – Entwurf
 ### Added
 - Theme `panel` als Standard: Schiefertafel mit Eisenrahmen und Nieten, bernsteinfarbenes Leuchtschild als Überschrift, cremefarbene Serifenschrift, aktives Thema mit glimmendem Kästchen. Abgestimmt auf die Programm-Tafel der Intro-Szene.
 - URL-Parameter `scale` (0.5–2) zum Feinjustieren der Schriftgröße.
