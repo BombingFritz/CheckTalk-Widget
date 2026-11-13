@@ -235,6 +235,20 @@
   /* erledigt: nur abgehakt und ausgegraut, nicht durchgestrichen */
   li[data-status="erledigt"] .title { color: var(--done-text); }
 
+  .diag {
+    position: fixed;
+    left: 8px;
+    bottom: 6px;
+    max-width: calc(100% - 16px);
+    font: 16px/1.4 system-ui, sans-serif;
+    color: #fff;
+    background: rgba(160, 20, 20, 0.85);
+    padding: 6px 10px;
+    border-radius: 4px;
+    z-index: 10;
+    white-space: pre-wrap;
+  }
+  .diag.ok { background: rgba(20, 110, 40, 0.85); }
   .demo-help {
     position: fixed;
     right: 8px;
@@ -257,7 +271,7 @@
 
 <script>
 'use strict';
-const WIDGET_VERSION = '0.2.0';
+const WIDGET_VERSION = '0.2.1';
 
 // ── Einstellungen ──
 // Überschrift, Design und Hintergrund kommen vom Server (Webkonsole, Reiter „Topics“).
@@ -327,15 +341,46 @@ function hideBecauseOffline() {
 }
 
 // ── Betrieb: Zustand vom Server per Server-Sent Events (Spec intro-topics.md) ──
+// ── Diagnose (?debug=1): zeigt in der Quelle, ob und wie das Widget den Server erreicht ──
+const DEBUG = params.get('debug') === '1';
+let diagBox = null;
+function diag(text, ok = false) {
+  if (!DEBUG) return;
+  if (!diagBox) { diagBox = document.createElement('div'); diagBox.className = 'diag'; document.body.append(diagBox); }
+  diagBox.textContent = `CheckTalk ${WIDGET_VERSION} · ${text}`;
+  diagBox.classList.toggle('ok', ok);
+}
+
+function diagnoseFailure() {
+  if (location.protocol !== 'file:') {
+    return `Seite geladen über „${location.protocol}//${location.host}“. In OBS „Lokale Datei“ ausschalten und die Datei als URL file:///C:/… eintragen (neuere OBS-Versionen sperren sonst den Zugriff auf localhost).`;
+  }
+  // Prüfen, ob der Server überhaupt antwortet (gleiche Adresse, normale Anfrage statt Events)
+  fetch(`${SERVER}/api/topics`, { cache: 'no-store' })
+    .then(r => diag(r.ok ? `Server antwortet auf /api/topics, aber der Event-Stream bricht ab (HTTP ${r.status}). Server neu starten?` : `Server antwortet mit HTTP ${r.status} auf ${SERVER}/api/topics.${r.status === 404 ? ' Läuft eine alte Server-Version ohne Intro-Topics?' : ''}${r.status === 403 ? ' Zugriff abgelehnt: Server-Konsole prüfen ([Zugriffsschutz]).' : ''}`))
+    .catch(() => diag(`Server nicht erreichbar: ${SERVER}. Läuft der Server, stimmt der Port? Sonst blockiert OBS die Anfrage (Konsole der Quelle über --remote-debugging-port prüfen).`));
+  return `Keine Verbindung zu ${SERVER}/api/topics/stream – prüfe …`;
+}
+
 function connect() {
+  diag(`verbinde mit ${SERVER} (Seite: ${location.protocol}//${location.host || ''})`);
   const source = new EventSource(`${SERVER}/api/topics/stream`);
+  source.onopen = () => diag(`verbunden mit ${SERVER}, Ausgabe ${OUTPUT}`, true);
   source.addEventListener('state', ev => {
-    try { render(JSON.parse(ev.data)); } catch (err) { console.warn('[CheckTalk] Ungültiger Zustand', err); }
+    try {
+      const state = JSON.parse(ev.data);
+      render(state);
+      diag(`verbunden · Ausgabe ${OUTPUT} · ${state.enabled === false ? 'Modul AUS' : state.visible ? 'sichtbar' : 'ausgeblendet'} · Schritt ${state.step}/${2 * state.total}`, true);
+    } catch (err) {
+      console.warn('[CheckTalk] Ungültiger Zustand', err);
+      diag(`Ungültige Daten vom Server: ${err.message}`);
+    }
   });
   source.onerror = () => {
     // EventSource verbindet selbst neu (retry vom Server); bis dahin nichts zeigen
     hideBecauseOffline();
     lastRevision = -1;
+    diag(diagnoseFailure());
   };
 }
 

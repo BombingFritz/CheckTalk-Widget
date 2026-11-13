@@ -4,6 +4,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach
 
 ## [Unreleased]
 
+## [0.2.1] – 2026-11-13
+### Added
+- Diagnosemodus `?debug=1`: Feld unten links zeigt, ob die Quelle mit dem Server verbunden ist, und sonst den wahrscheinlichen Grund (über „Lokale Datei“ geladen, Server nicht erreichbar, falsche Server-Version). README mit Abschnitt „Fehlersuche“.
+
 ## [0.2.0] – 2026-11-12
 ### Added
 - Anzeige-Einstellungen vom Server: Überschrift, Design und Hintergrund je Ausgabe kommen aus der Webkonsole (Reiter „Topics“) und gelten sofort. Neuer Parameter `output=horizontal|vertikal`; `theme`, `background` und `title` überschreiben nur noch für eine Quelle.

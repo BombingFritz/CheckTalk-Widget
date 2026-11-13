@@ -47,8 +47,21 @@ Schriften (Theme `panel`): Zilla Slab für die Themen, Big Shoulders Stencil fü
 | `anchor` | `tl`, `tr`, `bl`, `br`, `c` (Ecke innerhalb der Quelle) | `tl` |
 | `scale` | Schriftgröße als Faktor, 0.5 bis 2 | `1` |
 | `title` | nur für diese Quelle überschreiben; leer = keine Überschrift | aus der Webkonsole (`Tagesthemen`) |
+| `debug` | `1` = Diagnosefeld unten links: verbunden (grün) oder warum nicht (rot) | aus |
 | `demo` | `1` = ohne Server, Bedienung per Tastatur | aus |
 | `items` | nur Demo: Themen, getrennt mit `\|` | Beispielliste |
+
+## Fehlersuche: Widget bleibt unsichtbar
+Zeigt die Webkonsole im Reiter „Topics“ „Widgets/Plugin: keins verbunden“, erreicht die Quelle den Server nicht. `&debug=1` an die URL der Quelle hängen und die Seite neu laden; das Feld unten links nennt die Ursache:
+
+| Meldung | Lösung |
+|---|---|
+| „Seite geladen über http://absolute …“ | In den Eigenschaften der Quelle „Lokale Datei“ **aus**schalten und die Datei als URL `file:///C:/…/CheckTalk.html?…` eintragen |
+| „Server nicht erreichbar …“ | Server läuft nicht, Port weicht ab (`&server=http://localhost:<PORT>`), oder OBS blockiert die Anfrage |
+| „HTTP 404 …“ | Server-Version ohne Intro-Topics: `git pull`, Server neu starten |
+| grün „verbunden“, aber nichts zu sehen | Liste ist ausgeblendet (Webkonsole: „Ein/Aus“), Modul aus, oder die Quelle liegt in OBS unter anderen Quellen bzw. außerhalb des Bildes |
+
+Die Datei muss die echte `CheckTalk.html` sein (auf GitHub „Download raw file“), nicht die per Rechtsklick gespeicherte GitHub-Seite.
 
 ## Demo ohne Server
 `CheckTalk.html?demo=1` im Browser öffnen. Tasten: N, → oder Leertaste = weiter, B oder ← = zurück, H = ein/aus, R = reset.
