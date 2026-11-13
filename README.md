@@ -36,13 +36,16 @@ Empfohlene Quellen (abgestimmt auf die Intro-Szene, 12.11.2026):
 
 Vertikal steht die Liste dort, wo sonst Dreh-Logo und Untertitel stehen. Die Quelle muss in OBS **über** diesen Quellen liegen; mit deckendem Hintergrund verschwinden sie, solange die Liste eingeblendet ist.
 
-Schriften (Theme `panel`): Zilla Slab für die Themen, Big Shoulders Stencil für die Überschrift, beide frei (SIL Open Font License) und in die Datei eingebettet.
+Schriften: Theme `panel` nutzt Zilla Slab für die Themen und Big Shoulders Stencil für die Überschrift, Theme `clean` Atkinson Hyperlegible. Alle drei sind frei (SIL Open Font License) und in die Datei eingebettet.
+
+**Theme `clean`:** nur die Liste als Text, ohne Tafel und Rahmen. Weiße Schrift mit dunkler Kontur und weichem Schatten, gut lesbar auf gleichmäßigem hellem wie dunklem Hintergrund. Die Tafel ist vorhanden, aber ganz durchsichtig; mit `&plate=40` bekommt sie 40 % Deckkraft. Im Hintergrund „deckend“ füllt das Widget die Quelle wie bei den anderen Designs schwarz.
 
 | Parameter | Werte | Standard |
 |---|---|---|
 | `server` | Adresse des Servers | `http://localhost:3000` |
 | `output` | `horizontal`, `vertikal`: welcher Hintergrund aus der Webkonsole gilt | `horizontal` |
-| `theme` | nur für diese Quelle überschreiben: `panel` (Programm-Tafel), `spargel` (wie SpargelPoll), `neutral` | aus der Webkonsole |
+| `theme` | nur für diese Quelle überschreiben: `panel` (Programm-Tafel), `clean` (nur Text), `spargel` (wie SpargelPoll), `neutral` | aus der Webkonsole |
+| `plate` | nur Theme `clean`: Deckkraft der Tafel hinter dem Text in Prozent, 0 bis 100 | `0` (keine Tafel) |
 | `background` | nur für diese Quelle überschreiben: `transparent`, `solid` | aus der Webkonsole |
 | `anchor` | `tl`, `tr`, `bl`, `br`, `c` (Ecke innerhalb der Quelle) | `tl` |
 | `scale` | Schriftgröße als Faktor, 0.5 bis 2 | `1` |
@@ -76,8 +79,9 @@ Die Datei muss die echte `CheckTalk.html` sein (auf GitHub „Download raw file�
 |---|---|---|
 | Zilla Slab Bold, Teilmenge latin | The Mozilla Foundation, über `@fontsource/zilla-slab` 5.3.0 | SIL Open Font License 1.1 |
 | Big Shoulders Stencil Display Bold, Teilmenge latin | über `@fontsource/big-shoulders-stencil-display` 5.3.0 | SIL Open Font License 1.1 |
+| Atkinson Hyperlegible Bold, Teilmenge latin | Braille Institute of America, über `@fontsource/atkinson-hyperlegible` 5.3.0 | SIL Open Font License 1.1 |
 
-Beide unverändert als Base64 in `CheckTalk.html` eingebettet; Lizenztexte in [LICENSE-FONTS.txt](LICENSE-FONTS.txt). Die Themes `spargel` und `neutral` nutzen Systemschriften (Impact, Segoe UI), die nicht mitgeliefert werden.
+Alle unverändert als Base64 in `CheckTalk.html` eingebettet; Lizenztexte in [LICENSE-FONTS.txt](LICENSE-FONTS.txt). Die Themes `spargel` und `neutral` nutzen Systemschriften (Impact, Segoe UI), die nicht mitgeliefert werden.
 
 ## Lizenz
 [MIT](LICENSE) für den Code des Widgets. Die eingebetteten Schriften stehen unter der SIL Open Font License 1.1 ([LICENSE-FONTS.txt](LICENSE-FONTS.txt)). Der Server steht unter einer eigenen Lizenz (siehe Server-Repository).

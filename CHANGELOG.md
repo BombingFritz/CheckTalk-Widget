@@ -4,6 +4,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), Versionen nach
 
 ## [Unreleased]
 
+## [0.3.0] – 2026-11-13
+### Added
+- Theme `clean`: nur die Liste als Text, ohne Tafel und Rahmen, weiße Schrift mit dunkler Kontur für gleichmäßigen hellen wie dunklen Hintergrund. Schrift Atkinson Hyperlegible (OFL 1.1, eingebettet). Parameter `plate` (0–100) für eine Tafel mit wählbarer Deckkraft; Standard 0.
+
 ## [0.2.1] – 2026-11-13
 ### Added
 - Diagnosemodus `?debug=1`: Feld unten links zeigt, ob die Quelle mit dem Server verbunden ist, und sonst den wahrscheinlichen Grund (über „Lokale Datei“ geladen, Server nicht erreichbar, falsche Server-Version). README mit Abschnitt „Fehlersuche“.
